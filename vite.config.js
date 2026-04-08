@@ -42,7 +42,7 @@ export default defineConfig({
   resolve: {
     alias: {
       // Point directly to TS source so Vite transpiles it natively (no CJS/ESM conflict)
-      '@stock-pulse/core': path.resolve(__dirname, '../../packages/core/src/index.ts'),
+      '@stock-pulse/core': path.resolve(__dirname, './src/core/index.ts'),
     },
   },
   server: {
