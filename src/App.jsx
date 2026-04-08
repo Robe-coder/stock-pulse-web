@@ -280,14 +280,11 @@ function AuthGate({ onAuth }) {
     setError(null);
     try {
       if (mode === "forgot") {
-        const res = await fetch(`${SUPABASE_URL}/auth/v1/recover`, {
+        const redirectTo = encodeURIComponent(window.location.origin);
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/recover?redirect_to=${redirectTo}`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON },
-          body: JSON.stringify({
-            email,
-            gotrue_meta_security: {},
-            redirectTo: window.location.origin,
-          }),
+          body: JSON.stringify({ email }),
         });
         if (!res.ok) {
           const d = await res.json();
