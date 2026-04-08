@@ -389,8 +389,15 @@ function AuthGate({ onAuth }) {
 // MAIN COMPONENT
 // ═══════════════════════════════════════════
 
+function isRecoveryUrl() {
+  const hash = window.location.hash.slice(1);
+  if (!hash) return false;
+  const params = new URLSearchParams(hash);
+  return params.get("type") === "recovery" && !!params.get("access_token");
+}
+
 export default function StockAnalyzer() {
-  const [authed, setAuthed] = useState(() => !!localStorage.getItem("sp-auth-token"));
+  const [authed, setAuthed] = useState(() => !isRecoveryUrl() && !!localStorage.getItem("sp-auth-token"));
   const [tab, setTab] = useState("analyze");
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
