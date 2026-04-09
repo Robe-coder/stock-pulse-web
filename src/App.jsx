@@ -417,6 +417,7 @@ export default function StockAnalyzer() {
   const [refreshing, setRefreshing] = useState(false);
   const [levelModal, setLevelModal] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
   const [currency, setCurrency] = useState(() => localStorage.getItem("sp-currency") || "USD");
   const loadStart = useRef(0);
   const phaseTimer = useRef(null);
@@ -430,6 +431,7 @@ export default function StockAnalyzer() {
   useEffect(() => {
     if (!authed) return;
     fetchRuns().then(setRuns).catch(() => {});
+    apiFetch("/api/billing/status").then(d => setIsPremium(d.isPremium)).catch(() => {});
   }, [authed]);
 
   if (!authed) {
@@ -599,8 +601,6 @@ export default function StockAnalyzer() {
               )}
             </div>
           )}
-
-          {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} />}
 
           {data && <>
             <div style={{ background: "linear-gradient(135deg,rgba(0,255,135,.03),rgba(0,204,106,.01))", border: "1px solid rgba(0,255,135,.1)", borderRadius: 10, padding: 14, marginBottom: 12, animation: "glow 3s infinite" }}>
@@ -905,17 +905,29 @@ export default function StockAnalyzer() {
           ))}
         </>}
 
+        {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} />}
+
         {/* ═══ PERFIL ═══ */}
         {tab === "profile" && (
           <div style={{ maxWidth: 440, margin: "0 auto" }}>
             {/* Premium */}
-            <div style={{ backgroundColor: "#0d1117", border: "1px solid rgba(255,184,0,.2)", borderRadius: 12, padding: 16, marginBottom: 12 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: "#ffb800", marginBottom: 4 }}>⭐ Plan Premium</div>
-              <div style={{ fontSize: 11, color: "#8b949e", marginBottom: 14 }}>2 análisis al día · Picks personalizados · Soporte prioritario</div>
-              <button onClick={() => setShowPaywall(true)} style={{ width: "100%", padding: "11px", fontSize: 14, fontWeight: 700, fontFamily: "inherit", backgroundColor: "#ffb800", color: "#0a0e17", border: "none", borderRadius: 8, cursor: "pointer" }}>
-                💎 Ver planes y activar Premium
-              </button>
-            </div>
+            {isPremium ? (
+              <div style={{ backgroundColor: "#0d1117", border: "1px solid rgba(0,255,135,.2)", borderRadius: 12, padding: 16, marginBottom: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#00ff87", marginBottom: 4 }}>✅ Plan Premium activo</div>
+                <div style={{ fontSize: 11, color: "#8b949e", marginBottom: 14 }}>2 análisis al día · Picks personalizados · Soporte prioritario</div>
+                <button onClick={() => setShowPaywall(true)} style={{ width: "100%", padding: "11px", fontSize: 13, fontFamily: "inherit", backgroundColor: "transparent", color: "#88c6ff", border: "1px solid #1e2433", borderRadius: 8, cursor: "pointer" }}>
+                  Gestionar suscripción
+                </button>
+              </div>
+            ) : (
+              <div style={{ backgroundColor: "#0d1117", border: "1px solid rgba(255,184,0,.2)", borderRadius: 12, padding: 16, marginBottom: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#ffb800", marginBottom: 4 }}>⭐ Plan Premium</div>
+                <div style={{ fontSize: 11, color: "#8b949e", marginBottom: 14 }}>2 análisis al día · Picks personalizados · Soporte prioritario</div>
+                <button onClick={() => setShowPaywall(true)} style={{ width: "100%", padding: "11px", fontSize: 14, fontWeight: 700, fontFamily: "inherit", backgroundColor: "#ffb800", color: "#0a0e17", border: "none", borderRadius: 8, cursor: "pointer" }}>
+                  💎 Ver planes y activar Premium
+                </button>
+              </div>
+            )}
 
             {/* Stats rápidas */}
             {stats.tot > 0 && (
