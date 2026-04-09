@@ -114,8 +114,19 @@ function LevelModal({ type, onClose }) {
 }
 
 function PaywallModal({ onClose }) {
-  const FEATURES_FREE = ["4 análisis al mes", "Tracking ilimitado de stocks", "Historial de predicciones", "Calibración de la IA"];
-  const FEATURES_PREMIUM = ["2 análisis al día (cada 12h)", "Todo lo del plan Gratis", "Picks personalizados del pool global", "Soporte prioritario"];
+  const FEATURES_FREE = [
+    "4 análisis al mes",
+    "2 stocks en el monitor de seguimiento",
+    "Resultado del análisis en tiempo real",
+  ];
+  const FEATURES_PREMIUM = [
+    "Análisis ilimitados (mín. 30 min entre análisis)",
+    "10 stocks en el monitor de seguimiento",
+    "Historial completo de predicciones",
+    "Estadísticas de rentabilidad real",
+    "Calibración de precisión de la IA",
+    "Soporte prioritario",
+  ];
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
   const [err, setErr] = useState(null);
@@ -160,7 +171,7 @@ function PaywallModal({ onClose }) {
           <div style={{ fontSize: 20, fontWeight: 700, color: "#00ff87" }}>💎 Stock Pulse Premium</div>
           <button onClick={onClose} style={{ background: "none", border: "none", color: "#6e7681", fontSize: 20, cursor: "pointer" }}>✕</button>
         </div>
-        <p style={{ fontSize: 12, color: "#6e7681", margin: "0 0 20px" }}>Más análisis, más oportunidades</p>
+        <p style={{ fontSize: 12, color: "#6e7681", margin: "0 0 20px" }}>Desbloquea todo el potencial de tu análisis</p>
 
         {err && <div style={{ padding: "8px 12px", borderRadius: 6, marginBottom: 12, backgroundColor: "rgba(255,71,87,.08)", color: "#ff4757", fontSize: 12, border: "1px solid rgba(255,71,87,.2)" }}>{err}</div>}
 
@@ -186,9 +197,14 @@ function PaywallModal({ onClose }) {
         </div>
 
         {/* Manage existing subscription */}
-        <button onClick={handlePortal} disabled={portalLoading} style={{ width: "100%", padding: "10px", fontSize: 13, fontFamily: "inherit", backgroundColor: "transparent", color: portalLoading ? "#6e7681" : "#88c6ff", border: "1px solid #1e2433", borderRadius: 8, cursor: portalLoading ? "not-allowed" : "pointer" }}>
+        <button onClick={handlePortal} disabled={portalLoading} style={{ width: "100%", padding: "10px", fontSize: 13, fontFamily: "inherit", backgroundColor: "transparent", color: portalLoading ? "#6e7681" : "#88c6ff", border: "none", cursor: portalLoading ? "not-allowed" : "pointer", textDecoration: "underline" }}>
           {portalLoading ? "..." : "Gestionar suscripción existente"}
         </button>
+
+        <p style={{ fontSize: 12, color: "#6e7681", textAlign: "center", margin: "12px 0 0", lineHeight: 1.6 }}>
+          Pago seguro con Stripe. Cancela cuando quieras desde el portal de gestión.<br />
+          El cobro se renueva automáticamente cada mes.
+        </p>
       </div>
     </div>
   );
