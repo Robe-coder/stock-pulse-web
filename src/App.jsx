@@ -915,8 +915,13 @@ export default function StockAnalyzer() {
               <div style={{ backgroundColor: "#0d1117", border: "1px solid rgba(0,255,135,.2)", borderRadius: 12, padding: 16, marginBottom: 12 }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#00ff87", marginBottom: 4 }}>✅ Plan Premium activo</div>
                 <div style={{ fontSize: 11, color: "#8b949e", marginBottom: 14 }}>2 análisis al día · Picks personalizados · Soporte prioritario</div>
-                <button onClick={() => setShowPaywall(true)} style={{ width: "100%", padding: "11px", fontSize: 13, fontFamily: "inherit", backgroundColor: "transparent", color: "#88c6ff", border: "1px solid #1e2433", borderRadius: 8, cursor: "pointer" }}>
-                  Gestionar suscripción
+                <button onClick={async () => {
+                  try {
+                    const d = await apiFetch("/api/billing/portal", { method: "POST", body: JSON.stringify({ returnUrl: window.location.origin }) });
+                    window.location.href = d.url;
+                  } catch (e) { alert(e.message); }
+                }} style={{ width: "100%", padding: "11px", fontSize: 13, fontFamily: "inherit", backgroundColor: "transparent", color: "#88c6ff", border: "1px solid #1e2433", borderRadius: 8, cursor: "pointer" }}>
+                  Gestionar suscripción →
                 </button>
               </div>
             ) : (
