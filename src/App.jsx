@@ -73,9 +73,9 @@ const potentialColor = v => v === "Alto" ? "#00ff87" : v === "Medio" ? "#ffb800"
 const convictionColor = v => v === "Alta" ? "#00ff87" : v === "Media" ? "#ffb800" : "#ff4757";
 const potentialEmoji = v => v === "Alto" ? "🟢" : v === "Medio" ? "🟡" : "🔴";
 const convictionEmoji = v => v === "Alta" ? "🟢" : v === "Media" ? "🟡" : "🔴";
-const lbl = { fontSize: 10, color: "#8b949e", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 };
+const lbl = { fontSize: 11, color: "#8b949e", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 };
 const mn = (s, c = "#e6edf3") => ({ fontSize: s, fontWeight: 700, fontFamily: "'JetBrains Mono',monospace", color: c });
-const pS = { fontSize: 13, lineHeight: 1.7, color: "#c9d1d9", margin: "0 0 6px" };
+const pS = { fontSize: 15, lineHeight: 1.8, color: "#c9d1d9", margin: "0 0 8px" };
 const catC = { Tecnología: "#00c8ff", Aranceles: "#ffb800", Energía: "#00ff87", Biotech: "#a882ff", Infraestructura: "#ff8700", Geopolítica: "#ff4757" };
 
 const POTENTIAL_INFO = [
@@ -779,9 +779,9 @@ export default function StockAnalyzer() {
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
         {/* HEADER */}
         <div style={{ textAlign: "center", marginBottom: 14 }}>
-          <h1 style={{ fontSize: 28, fontWeight: 700, margin: "0 0 6px", background: "linear-gradient(135deg,#e6edf3,#00ff87)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>⚡ Stock Pulse</h1>
-          <p style={{ color: "#e6edf3", fontSize: 14, fontWeight: 600, margin: "0 0 4px" }}>Invierte como un pro. Sin serlo.</p>
-          <p style={{ color: "#6e7681", fontSize: 10, margin: 0 }}>Análisis en profundidad · Mercado global · No es consejo de inversión</p>
+          <h1 style={{ fontSize: 32, fontWeight: 700, margin: "0 0 6px", background: "linear-gradient(135deg,#e6edf3,#00ff87)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>⚡ Stock Pulse</h1>
+          <p style={{ color: "#e6edf3", fontSize: 15, fontWeight: 600, margin: "0 0 4px" }}>Invierte como un pro. Sin serlo.</p>
+          <p style={{ color: "#6e7681", fontSize: 12, margin: 0 }}>Análisis en profundidad · Mercado global · Decide con información</p>
         </div>
 
 
@@ -789,16 +789,16 @@ export default function StockAnalyzer() {
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 14, flexWrap: "wrap", marginBottom: 14, padding: "5px 12px", backgroundColor: clock.o ? "rgba(0,255,135,.04)" : "rgba(136,198,255,.04)", border: `1px solid ${clock.o ? "rgba(0,255,135,.1)" : "rgba(136,198,255,.1)"}`, borderRadius: 8 }}>
           <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
             <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: clock.o ? "#00ff87" : "#88c6ff", animation: clock.o ? "pulse 1.5s infinite" : "none" }} />
-            <span style={{ fontSize: 11, fontFamily: "'JetBrains Mono',monospace", color: clock.o ? "#00ff87" : "#88c6ff" }}>🇺🇸 NYSE · {clock.t}</span>
+            <span style={{ fontSize: 13, fontFamily: "'JetBrains Mono',monospace", color: clock.o ? "#00ff87" : "#88c6ff" }}>🇺🇸 NYSE · {clock.t}</span>
           </span>
-          <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono',monospace", color: "#6e7681" }}>🇪🇸 {clock.m} · 🇺🇸 {clock.n}</span>
-          {stats.tot > 0 && <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono',monospace", color: "#6e7681" }}>📊 {stats.tot} pred · {stats.wr}% win</span>}
+          <span style={{ fontSize: 12, fontFamily: "'JetBrains Mono',monospace", color: "#6e7681" }}>🇪🇸 {clock.m} · 🇺🇸 {clock.n}</span>
+          {stats.tot > 0 && <span style={{ fontSize: 12, fontFamily: "'JetBrains Mono',monospace", color: "#6e7681" }}>📊 {stats.tot} pred · {stats.wr}% win</span>}
         </div>
 
         {/* TABS */}
         <div style={{ display: "flex", marginBottom: 18, borderBottom: "1px solid #1e2433" }}>
           {[["analyze", "🌍 Analizar"], ["monitor", `📡 Monitor${stats.pend ? ` (${stats.pend})` : ""}`], ["history", "📊 Historial"], ["profile", "👤 Perfil"]].map(([k, l]) => (
-            <button key={k} onClick={() => setTab(k)} style={{ flex: 1, padding: "8px 0", fontSize: 12, fontWeight: 600, fontFamily: "inherit", backgroundColor: "transparent", color: tab === k ? "#00ff87" : "#6e7681", border: "none", borderBottom: tab === k ? "2px solid #00ff87" : "2px solid transparent", cursor: "pointer" }}>{l}</button>
+            <button key={k} onClick={() => setTab(k)} style={{ flex: 1, padding: "10px 0", fontSize: 13, fontWeight: 600, fontFamily: "inherit", backgroundColor: "transparent", color: tab === k ? "#00ff87" : "#6e7681", border: "none", borderBottom: tab === k ? "2px solid #00ff87" : "2px solid transparent", cursor: "pointer" }}>{l}</button>
           ))}
         </div>
 
