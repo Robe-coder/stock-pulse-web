@@ -415,7 +415,7 @@ const LEGAL = {
   privacy: {
     title: "📋 Política de Privacidad",
     sections: [
-      { h: "Responsable del tratamiento", b: "[NOMBRE APELLIDOS]\nNIF: [NIF]\n[DIRECCIÓN]\npuntoasiaspain@gmail.com" },
+      { h: "Responsable del tratamiento", b: "puntoasiaspain@gmail.com" },
       { h: "Datos que tratamos", b: "• Correo electrónico\n• Historial de análisis bursátiles\n• Plan de suscripción activo" },
       { h: "Finalidad del tratamiento", b: "Los datos se utilizan exclusivamente para la prestación del servicio Stock Pulse: gestión de cuenta, generación de análisis y control del plan de suscripción." },
       { h: "Base jurídica", b: "El tratamiento se basa en el artículo 6.1.b del RGPD: ejecución del contrato de servicio aceptado al registrarse." },
@@ -466,13 +466,13 @@ const LEGAL = {
 function LegalModal({ doc, onClose }) {
   if (!doc) return null;
   return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,.85)", zIndex: 2000, display: "flex", flexDirection: "column" }}>
-      <div onClick={e => e.stopPropagation()} style={{ backgroundColor: "#0a0e17", flex: 1, display: "flex", flexDirection: "column", maxWidth: 600, width: "100%", margin: "0 auto" }}>
-        <div style={{ display: "flex", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid #1e2433" }}>
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,.85)", zIndex: 2000, display: "flex", alignItems: "stretch" }}>
+      <div onClick={e => e.stopPropagation()} style={{ backgroundColor: "#0a0e17", display: "flex", flexDirection: "column", maxWidth: 600, width: "100%", margin: "0 auto", height: "100%", overflow: "hidden" }}>
+        <div style={{ display: "flex", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid #1e2433", flexShrink: 0 }}>
           <span style={{ flex: 1, fontSize: 15, fontWeight: 700, color: "#e6edf3" }}>{LEGAL[doc].title}</span>
           <button onClick={onClose} style={{ background: "none", border: "1px solid #1e2433", borderRadius: 16, color: "#6e7681", fontSize: 14, cursor: "pointer", width: 32, height: 32 }}>✕</button>
         </div>
-        <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+        <div style={{ flexGrow: 1, overflowY: "scroll", WebkitOverflowScrolling: "touch", padding: "20px" }}>
           {LEGAL[doc].sections.map((s, i) => (
             <div key={i} style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: "#e6edf3", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>{s.h}</div>
@@ -480,7 +480,7 @@ function LegalModal({ doc, onClose }) {
             </div>
           ))}
         </div>
-        <div style={{ padding: "16px 20px", borderTop: "1px solid #1e2433" }}>
+        <div style={{ padding: "16px 20px", borderTop: "1px solid #1e2433", flexShrink: 0 }}>
           <button onClick={onClose} style={{ width: "100%", padding: "12px", fontSize: 14, fontWeight: 600, fontFamily: "inherit", backgroundColor: "#0d1117", color: "#e6edf3", border: "1px solid #1e2433", borderRadius: 10, cursor: "pointer" }}>Cerrar</button>
         </div>
       </div>
@@ -547,7 +547,11 @@ function ProfileTab({ isPremium, profileData, onShowPaywall, onSignOut }) {
     try {
       const d = await apiFetch("/api/billing/portal", { method: "POST", body: JSON.stringify({ returnUrl: window.location.origin }) });
       window.location.href = d.url;
-    } catch (e) { alert(e.message); setPortalLoading(false); }
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setPortalLoading(false);
+    }
   };
 
   return (
@@ -594,10 +598,9 @@ function ProfileTab({ isPremium, profileData, onShowPaywall, onSignOut }) {
         />
         <Divider />
         {isPremium && <>
-          <SettingsRow icon="⚙️" label={portalLoading ? "Cargando..." : "Gestionar suscripción"} onClick={openPortal} />
           <Divider />
+          <SettingsRow icon="⚙️" label={portalLoading ? "Cargando..." : "Gestionar suscripción"} onClick={portalLoading ? null : openPortal} />
         </>}
-        <SettingsRow icon="💳" label="Método de pago" badge="Próximamente" dim />
       </SettingsCard>
 
       {/* LEGAL Y PRIVACIDAD */}
