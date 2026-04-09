@@ -408,6 +408,237 @@ function AuthGate({ onAuth }) {
 }
 
 // ═══════════════════════════════════════════
+// PROFILE / SETTINGS TAB
+// ═══════════════════════════════════════════
+
+const LEGAL = {
+  privacy: {
+    title: "📋 Política de Privacidad",
+    sections: [
+      { h: "Responsable del tratamiento", b: "[NOMBRE APELLIDOS]\nNIF: [NIF]\n[DIRECCIÓN]\npuntoasiaspain@gmail.com" },
+      { h: "Datos que tratamos", b: "• Correo electrónico\n• Historial de análisis bursátiles\n• Plan de suscripción activo" },
+      { h: "Finalidad del tratamiento", b: "Los datos se utilizan exclusivamente para la prestación del servicio Stock Pulse: gestión de cuenta, generación de análisis y control del plan de suscripción." },
+      { h: "Base jurídica", b: "El tratamiento se basa en el artículo 6.1.b del RGPD: ejecución del contrato de servicio aceptado al registrarse." },
+      { h: "Encargados del tratamiento", b: "• Supabase Inc. — almacenamiento de datos (acuerdo DPA firmado, servidores en la UE)\n• OpenRouter Inc. — procesamiento de IA (cláusulas contractuales tipo SCCs conforme al RGPD)" },
+      { h: "Plazo de conservación", b: "Los datos se conservan mientras mantengas una cuenta activa y durante 3 años adicionales conforme a la LSSICE." },
+      { h: "Tus derechos (ARCO+)", b: "Tienes derecho a acceder, rectificar, suprimir, portar, limitar u oponerte al tratamiento. Escríbenos a puntoasiaspain@gmail.com." },
+      { h: "Reclamación ante la AEPD", b: "Puedes presentar una reclamación ante la Agencia Española de Protección de Datos en www.aepd.es." },
+      { h: "Menores de edad", b: "Stock Pulse no está dirigido a menores de 18 años. No recopilamos conscientemente datos de menores." },
+    ],
+  },
+  terms: {
+    title: "📜 Términos y Condiciones",
+    sections: [
+      { h: "Objeto del servicio", b: "Stock Pulse es una herramienta informativa de análisis bursátil asistida por IA. Su finalidad es educativa e informativa, sin que constituya asesoramiento financiero." },
+      { h: "Mayoría de edad", b: "El acceso está reservado a personas mayores de 18 años. Al registrarte declaras ser mayor de edad." },
+      { h: "Tu cuenta", b: "Eres responsable de mantener la confidencialidad de tus credenciales y de todas las actividades realizadas con tu cuenta." },
+      { h: "Uso aceptable", b: "Queda prohibido:\n• El uso automatizado o masivo del servicio (bots, scrapers)\n• La reventa o cesión del acceso a terceros\n• La ingeniería inversa de la aplicación\n• Cualquier uso que infrinja la legislación aplicable" },
+      { h: "Planes y precios", b: "Stock Pulse ofrece un plan Gratuito (4 análisis/mes) y un plan Premium (análisis ilimitados con mínimo 30 min entre análisis). Los precios pueden modificarse con previo aviso." },
+      { h: "Pagos", b: "Los pagos se gestionan de forma segura a través de Stripe. El cobro se renueva automáticamente cada mes. Puedes cancelar en cualquier momento desde el portal de gestión." },
+      { h: "Limitación de responsabilidad", b: "Stock Pulse excluye cualquier responsabilidad por daños indirectos, lucro cesante o pérdida de datos. La responsabilidad máxima no excederá el importe abonado durante el último mes." },
+      { h: "Modificación de condiciones", b: "Nos reservamos el derecho a modificar estos Términos con un preaviso mínimo de 15 días notificado por correo electrónico." },
+      { h: "Legislación aplicable", b: "Estas condiciones se rigen por la legislación española. Para cualquier controversia, las partes se someten a los Juzgados y Tribunales del domicilio del Responsable." },
+    ],
+  },
+  ai: {
+    title: "🤖 Aviso sobre uso de IA",
+    sections: [
+      { h: "Tecnología empleada", b: "Stock Pulse utiliza modelos de lenguaje de gran tamaño (LLM) para generar análisis bursátiles. Los proveedores incluyen OpenRouter, Anthropic y Perplexity según el modelo activo." },
+      { h: "Limitaciones de los resultados", b: "Los análisis son generados automáticamente y pueden contener errores, imprecisiones o «alucinaciones». Los datos pueden no reflejar eventos de mercado recientes." },
+      { h: "Ausencia de información privilegiada", b: "La IA no tiene acceso a información privilegiada. Los análisis se basan exclusivamente en fuentes públicas." },
+      { h: "Cumplimiento del EU AI Act", b: "Stock Pulse se clasifica como sistema de IA de riesgo limitado conforme al Reglamento (UE) 2024/1689. El usuario es siempre informado de que interactúa con contenido generado por IA." },
+      { h: "Decisiones automatizadas", b: "No se utiliza IA para tomar decisiones automatizadas con efectos jurídicos. Todas las decisiones de inversión son tomadas libremente por el usuario." },
+    ],
+  },
+  risk: {
+    title: "⚠️ Aviso de riesgo financiero",
+    sections: [
+      { h: "Stock Pulse NO es una ESI ni EAFI", b: "Stock Pulse no está registrada como Empresa de Servicios de Inversión ni como EAFI ante la CNMV." },
+      { h: "Carácter exclusivamente informativo", b: "Los análisis son EXCLUSIVAMENTE informativos y educativos. Nada en Stock Pulse constituye asesoramiento financiero personalizado ni gestión de carteras." },
+      { h: "Riesgo de pérdida de capital", b: "Invertir en bolsa conlleva un riesgo real de pérdida parcial o total del capital invertido." },
+      { h: "Rentabilidades pasadas", b: "Las rentabilidades pasadas no garantizan rentabilidades futuras. Cualquier dato histórico tiene únicamente valor referencial." },
+      { h: "Consulta con un profesional", b: "Antes de tomar cualquier decisión de inversión, te recomendamos consultar con un asesor financiero certificado y regulado por la CNMV." },
+      { h: "Responsabilidad del usuario", b: "El usuario es el único responsable de sus decisiones de inversión. Stock Pulse no asume responsabilidad por las pérdidas derivadas del uso de la información proporcionada." },
+    ],
+  },
+};
+
+function LegalModal({ doc, onClose }) {
+  if (!doc) return null;
+  return (
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,.85)", zIndex: 2000, display: "flex", flexDirection: "column" }}>
+      <div onClick={e => e.stopPropagation()} style={{ backgroundColor: "#0a0e17", flex: 1, display: "flex", flexDirection: "column", maxWidth: 600, width: "100%", margin: "0 auto" }}>
+        <div style={{ display: "flex", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid #1e2433" }}>
+          <span style={{ flex: 1, fontSize: 15, fontWeight: 700, color: "#e6edf3" }}>{LEGAL[doc].title}</span>
+          <button onClick={onClose} style={{ background: "none", border: "1px solid #1e2433", borderRadius: 16, color: "#6e7681", fontSize: 14, cursor: "pointer", width: 32, height: 32 }}>✕</button>
+        </div>
+        <div style={{ flex: 1, overflowY: "auto", padding: "20px" }}>
+          {LEGAL[doc].sections.map((s, i) => (
+            <div key={i} style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#e6edf3", textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 6 }}>{s.h}</div>
+              <div style={{ fontSize: 13, color: "#8b949e", lineHeight: 1.7, whiteSpace: "pre-line" }}>{s.b}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ padding: "16px 20px", borderTop: "1px solid #1e2433" }}>
+          <button onClick={onClose} style={{ width: "100%", padding: "12px", fontSize: 14, fontWeight: 600, fontFamily: "inherit", backgroundColor: "#0d1117", color: "#e6edf3", border: "1px solid #1e2433", borderRadius: 10, cursor: "pointer" }}>Cerrar</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SettingsRow({ icon, label, onClick, badge, dim }) {
+  return (
+    <div onClick={onClick} style={{ display: "flex", alignItems: "center", padding: "11px 0", cursor: onClick ? "pointer" : "default", opacity: dim ? 0.5 : 1 }}>
+      <span style={{ fontSize: 16, marginRight: 12 }}>{icon}</span>
+      <span style={{ flex: 1, fontSize: 14, color: "#e6edf3" }}>{label}</span>
+      {badge
+        ? <span style={{ fontSize: 11, fontWeight: 600, color: "#88c6ff", backgroundColor: "rgba(136,198,255,.1)", border: "1px solid rgba(136,198,255,.2)", borderRadius: 10, padding: "2px 8px" }}>{badge}</span>
+        : onClick ? <span style={{ fontSize: 20, color: "#6e7681", lineHeight: 1 }}>›</span> : null}
+    </div>
+  );
+}
+
+function SectionLabel({ label }) {
+  return <div style={{ fontSize: 10, fontWeight: 700, color: "#6e7681", letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 8, marginTop: 4 }}>{label}</div>;
+}
+
+function SettingsCard({ children }) {
+  return <div style={{ backgroundColor: "#0d1117", border: "1px solid #1e2433", borderRadius: 12, paddingLeft: 14, paddingRight: 14, paddingTop: 2, paddingBottom: 2, marginBottom: 20 }}>{children}</div>;
+}
+
+function Divider() {
+  return <div style={{ height: 1, backgroundColor: "#1e2433" }} />;
+}
+
+function ProfileTab({ isPremium, profileData, onShowPaywall, onSignOut }) {
+  const [legalDoc, setLegalDoc] = useState(null);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const sub = profileData?.subscription;
+  const monthlyCount = sub?.monthlyCount ?? 0;
+  const monthlyLimit = sub?.monthlyLimit ?? 4;
+  const usageRatio = Math.min(monthlyCount / monthlyLimit, 1);
+
+  const email = (() => {
+    try {
+      const token = localStorage.getItem("sp-auth-token");
+      if (!token) return "";
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      return payload.email ?? "";
+    } catch { return ""; }
+  })();
+
+  const openSupport = () => window.location.href = "mailto:puntoasiaspain@gmail.com?subject=Soporte%20Stock%20Pulse";
+
+  const openExportData = () => {
+    const body = `Hola,%0A%0ASolicito%20una%20copia%20de%20todos%20mis%20datos%20conforme%20al%20art%C3%ADculo%2020%20del%20RGPD.%0A%0AEmail%3A%20${encodeURIComponent(email)}%0A%0AGracias.`;
+    window.location.href = `mailto:puntoasiaspain@gmail.com?subject=Solicitud%20exportaci%C3%B3n%20de%20datos%20RGPD&body=${body}`;
+  };
+
+  const openDeleteAccount = () => {
+    const body = `Hola,%0A%0ASolicito%20la%20eliminaci%C3%B3n%20completa%20de%20mis%20datos%20conforme%20al%20art%C3%ADculo%2017%20del%20RGPD.%0A%0AEmail%3A%20${encodeURIComponent(email)}%0A%0AGracias.`;
+    window.location.href = `mailto:puntoasiaspain@gmail.com?subject=Solicitud%20eliminaci%C3%B3n%20de%20cuenta%20RGPD&body=${body}`;
+  };
+
+  const openPortal = async () => {
+    setPortalLoading(true);
+    try {
+      const d = await apiFetch("/api/billing/portal", { method: "POST", body: JSON.stringify({ returnUrl: window.location.origin }) });
+      window.location.href = d.url;
+    } catch (e) { alert(e.message); setPortalLoading(false); }
+  };
+
+  return (
+    <div style={{ maxWidth: 480, margin: "0 auto", paddingBottom: 40 }}>
+      <div style={{ fontSize: 20, fontWeight: 700, color: "#e6edf3", marginBottom: 24 }}>⚙️ Ajustes</div>
+
+      {/* CUENTA */}
+      <SectionLabel label="CUENTA" />
+      <SettingsCard>
+        <div style={{ paddingTop: 12, paddingBottom: 4 }}>
+          <div style={{ fontSize: 10, color: "#6e7681", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 3 }}>Email</div>
+          <div style={{ fontSize: 14, color: "#e6edf3", marginBottom: 12 }}>{email || "—"}</div>
+          <Divider />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 12, paddingBottom: 12 }}>
+            <div style={{ fontSize: 10, color: "#6e7681", textTransform: "uppercase", letterSpacing: 0.8 }}>Plan</div>
+            <span style={{ fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 20, border: `1px solid ${isPremium ? "rgba(255,184,0,.4)" : "rgba(110,118,129,.3)"}`, backgroundColor: isPremium ? "rgba(255,184,0,.1)" : "rgba(110,118,129,.1)", color: isPremium ? "#ffb800" : "#8b949e" }}>
+              {isPremium ? "💎 Premium" : "Gratuito"}
+            </span>
+          </div>
+          <Divider />
+          <div style={{ paddingTop: 12, paddingBottom: 12 }}>
+            <div style={{ fontSize: 10, color: "#6e7681", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 6 }}>Uso este mes</div>
+            {isPremium ? (
+              <div style={{ fontSize: 13, color: "#8b949e" }}>{monthlyCount} análisis · <span style={{ color: "#00ff87" }}>Sin límite · cada 30 min</span></div>
+            ) : (
+              <>
+                <div style={{ fontSize: 13, color: "#8b949e", marginBottom: 6 }}>{monthlyCount} / {monthlyLimit} análisis</div>
+                <div style={{ height: 4, backgroundColor: "#1e2433", borderRadius: 2, overflow: "hidden" }}>
+                  <div style={{ height: 4, width: `${usageRatio * 100}%`, backgroundColor: usageRatio >= 1 ? "#ff4757" : "#00ff87", borderRadius: 2 }} />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </SettingsCard>
+
+      {/* SUSCRIPCIÓN */}
+      <SectionLabel label="SUSCRIPCIÓN" />
+      <SettingsCard>
+        <SettingsRow
+          icon="💎"
+          label={isPremium ? "Plan Premium activo" : "Ver planes Premium"}
+          onClick={isPremium ? null : onShowPaywall}
+        />
+        <Divider />
+        {isPremium && <>
+          <SettingsRow icon="⚙️" label={portalLoading ? "Cargando..." : "Gestionar suscripción"} onClick={openPortal} />
+          <Divider />
+        </>}
+        <SettingsRow icon="💳" label="Método de pago" badge="Próximamente" dim />
+      </SettingsCard>
+
+      {/* LEGAL Y PRIVACIDAD */}
+      <SectionLabel label="LEGAL Y PRIVACIDAD" />
+      <SettingsCard>
+        <SettingsRow icon="📋" label="Política de Privacidad" onClick={() => setLegalDoc("privacy")} />
+        <Divider />
+        <SettingsRow icon="📜" label="Términos y Condiciones" onClick={() => setLegalDoc("terms")} />
+        <Divider />
+        <SettingsRow icon="🤖" label="Aviso sobre uso de IA" onClick={() => setLegalDoc("ai")} />
+        <Divider />
+        <SettingsRow icon="⚠️" label="Aviso de riesgo financiero" onClick={() => setLegalDoc("risk")} />
+        <Divider />
+        <SettingsRow icon="📦" label="Exportar mis datos" onClick={openExportData} />
+      </SettingsCard>
+
+      {/* SOPORTE */}
+      <SectionLabel label="SOPORTE" />
+      <SettingsCard>
+        <SettingsRow icon="📧" label="Contactar con soporte" onClick={openSupport} />
+        <Divider />
+        <div style={{ display: "flex", justifyContent: "center", padding: "10px 0" }}>
+          <span style={{ fontSize: 12, color: "#6e7681" }}>Versión 1.2.0</span>
+        </div>
+      </SettingsCard>
+
+      {/* ZONA DE PELIGRO */}
+      <SectionLabel label="ZONA DE PELIGRO" />
+      <button onClick={onSignOut} style={{ width: "100%", padding: "13px", fontSize: 14, fontWeight: 600, fontFamily: "inherit", backgroundColor: "rgba(255,71,87,.1)", color: "#ff4757", border: "1px solid rgba(255,71,87,.3)", borderRadius: 10, cursor: "pointer", marginBottom: 10 }}>
+        Cerrar sesión
+      </button>
+      <button onClick={openDeleteAccount} style={{ width: "100%", padding: "13px", fontSize: 13, fontFamily: "inherit", backgroundColor: "rgba(255,71,87,.05)", color: "rgba(255,71,87,.7)", border: "1px solid rgba(255,71,87,.15)", borderRadius: 10, cursor: "pointer" }}>
+        Solicitar eliminación de cuenta
+      </button>
+
+      <LegalModal doc={legalDoc} onClose={() => setLegalDoc(null)} />
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════
 // MAIN COMPONENT
 // ═══════════════════════════════════════════
 
@@ -434,6 +665,7 @@ export default function StockAnalyzer() {
   const [levelModal, setLevelModal] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [profileData, setProfileData] = useState(null);
   const [currency, setCurrency] = useState(() => localStorage.getItem("sp-currency") || "USD");
   const loadStart = useRef(0);
   const phaseTimer = useRef(null);
@@ -448,6 +680,7 @@ export default function StockAnalyzer() {
     if (!authed) return;
     fetchRuns().then(setRuns).catch(() => {});
     apiFetch("/api/billing/status").then(d => setIsPremium(d.isPremium)).catch(() => {});
+    apiFetch("/api/profile/stats").then(d => setProfileData(d)).catch(() => {});
   }, [authed]);
 
   if (!authed) {
@@ -924,50 +1157,12 @@ export default function StockAnalyzer() {
         {showPaywall && <PaywallModal onClose={() => setShowPaywall(false)} />}
 
         {/* ═══ PERFIL ═══ */}
-        {tab === "profile" && (
-          <div style={{ maxWidth: 440, margin: "0 auto" }}>
-            {/* Premium */}
-            {isPremium ? (
-              <div style={{ backgroundColor: "#0d1117", border: "1px solid rgba(0,255,135,.2)", borderRadius: 12, padding: 16, marginBottom: 12 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#00ff87", marginBottom: 4 }}>✅ Plan Premium activo</div>
-                <div style={{ fontSize: 11, color: "#8b949e", marginBottom: 14 }}>2 análisis al día · Picks personalizados · Soporte prioritario</div>
-                <button onClick={async () => {
-                  try {
-                    const d = await apiFetch("/api/billing/portal", { method: "POST", body: JSON.stringify({ returnUrl: window.location.origin }) });
-                    window.location.href = d.url;
-                  } catch (e) { alert(e.message); }
-                }} style={{ width: "100%", padding: "11px", fontSize: 13, fontFamily: "inherit", backgroundColor: "transparent", color: "#88c6ff", border: "1px solid #1e2433", borderRadius: 8, cursor: "pointer" }}>
-                  Gestionar suscripción →
-                </button>
-              </div>
-            ) : (
-              <div style={{ backgroundColor: "#0d1117", border: "1px solid rgba(255,184,0,.2)", borderRadius: 12, padding: 16, marginBottom: 12 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#ffb800", marginBottom: 4 }}>⭐ Plan Premium</div>
-                <div style={{ fontSize: 11, color: "#8b949e", marginBottom: 14 }}>2 análisis al día · Picks personalizados · Soporte prioritario</div>
-                <button onClick={() => setShowPaywall(true)} style={{ width: "100%", padding: "11px", fontSize: 14, fontWeight: 700, fontFamily: "inherit", backgroundColor: "#ffb800", color: "#0a0e17", border: "none", borderRadius: 8, cursor: "pointer" }}>
-                  💎 Ver planes y activar Premium
-                </button>
-              </div>
-            )}
-
-            {/* Stats rápidas */}
-            {stats.tot > 0 && (
-              <div style={{ backgroundColor: "#0d1117", border: "1px solid #1e2433", borderRadius: 12, padding: 16, marginBottom: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, color: "#8b949e", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>Tus estadísticas</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                  <div style={{ textAlign: "center" }}><div style={lbl}>Análisis</div><div style={mn(18)}>{stats.tot}</div></div>
-                  <div style={{ textAlign: "center" }}><div style={lbl}>Win rate</div><div style={mn(18, +stats.wr >= 50 ? "#00ff87" : "#ff4757")}>{stats.wr}%</div></div>
-                  <div style={{ textAlign: "center" }}><div style={lbl}>Pendientes</div><div style={mn(18, "#ffb800")}>{stats.pend}</div></div>
-                </div>
-              </div>
-            )}
-
-            {/* Cerrar sesión */}
-            <button onClick={() => { localStorage.removeItem("sp-auth-token"); setAuthed(false); setRuns([]); setData(null); }} style={{ width: "100%", padding: "11px", fontSize: 13, fontFamily: "inherit", backgroundColor: "transparent", color: "#ff4757", border: "1px solid rgba(255,71,87,.2)", borderRadius: 8, cursor: "pointer" }}>
-              🚪 Cerrar sesión
-            </button>
-          </div>
-        )}
+        {tab === "profile" && <ProfileTab
+          isPremium={isPremium}
+          profileData={profileData}
+          onShowPaywall={() => setShowPaywall(true)}
+          onSignOut={() => { localStorage.removeItem("sp-auth-token"); setAuthed(false); setRuns([]); setData(null); }}
+        />}
       </div>
     </div>
   );
