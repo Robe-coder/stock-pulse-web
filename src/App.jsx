@@ -262,30 +262,22 @@ function AuthGate({ onAuth }) {
       setLoading(true);
       setError(null);
       try {
-        // First set the session, then update the password
-        const setRes = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON },
-          body: JSON.stringify({ refresh_token: resetTokens.refreshToken }),
-        });
-        const setData = await setRes.json();
-        if (!setRes.ok) throw new Error(setData.error_description || "Token inválido o expirado");
-
+        // Use the access token from the recovery link directly
         const updateRes = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             "apikey": SUPABASE_ANON,
-            "Authorization": `Bearer ${setData.access_token}`,
+            "Authorization": `Bearer ${resetTokens.accessToken}`,
           },
           body: JSON.stringify({ password }),
         });
         const updateData = await updateRes.json();
-        if (!updateRes.ok) throw new Error(updateData.message || "Error al cambiar contraseña");
+        if (!updateRes.ok) throw new Error(updateData.message || updateData.error_description || "Error al cambiar contraseña");
 
-        // Log in with new token
-        localStorage.setItem("sp-auth-token", setData.access_token);
-        onAuth(setData.access_token);
+        // Log in with the same token
+        localStorage.setItem("sp-auth-token", resetTokens.accessToken);
+        onAuth(resetTokens.accessToken);
       } catch (e) {
         setError(e.message);
       } finally {
