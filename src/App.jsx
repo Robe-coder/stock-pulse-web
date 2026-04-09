@@ -220,19 +220,39 @@ function AuthGate({ onAuth }) {
   const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
   const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
 
-  // Detect password recovery token in URL hash on mount
+  // Detect password recovery token in URL (hash = implicit flow, search = PKCE flow)
   useEffect(() => {
-    const hash = window.location.hash.slice(1);
-    if (!hash) return;
-    const params = new URLSearchParams(hash);
-    const accessToken = params.get("access_token");
-    const refreshToken = params.get("refresh_token");
-    const type = params.get("type");
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const searchParams = new URLSearchParams(window.location.search.slice(1));
+
+    const accessToken = hashParams.get("access_token");
+    const refreshToken = hashParams.get("refresh_token");
+    const type = hashParams.get("type");
+    const code = searchParams.get("code");
+
     if (accessToken && type === "recovery") {
+      // Implicit flow
       setResetTokens({ accessToken, refreshToken });
       setMode("reset");
-      // Clean URL
       window.history.replaceState(null, "", window.location.pathname);
+    } else if (code) {
+      // PKCE flow — intercambiar code por sesión
+      setLoading(true);
+      fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=pkce`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON },
+        body: JSON.stringify({ auth_code: code }),
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.access_token) {
+            setResetTokens({ accessToken: data.access_token, refreshToken: data.refresh_token });
+            setMode("reset");
+          }
+          window.history.replaceState(null, "", window.location.pathname);
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
     }
   }, []);
 
@@ -390,10 +410,11 @@ function AuthGate({ onAuth }) {
 // ═══════════════════════════════════════════
 
 function isRecoveryUrl() {
-  const hash = window.location.hash.slice(1);
-  if (!hash) return false;
-  const params = new URLSearchParams(hash);
-  return params.get("type") === "recovery" && !!params.get("access_token");
+  const hashParams = new URLSearchParams(window.location.hash.slice(1));
+  const searchParams = new URLSearchParams(window.location.search.slice(1));
+  const isImplicit = hashParams.get("type") === "recovery" && !!hashParams.get("access_token");
+  const isPkce = !!searchParams.get("code");
+  return isImplicit || isPkce;
 }
 
 export default function StockAnalyzer() {
