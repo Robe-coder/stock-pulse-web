@@ -819,13 +819,13 @@ export default function StockAnalyzer() {
             <button onClick={analyze} disabled={loading} style={{ background: loading ? "linear-gradient(135deg,#1a1f2e,#1e2433)" : "linear-gradient(135deg,#00ff87,#00cc6a)", color: loading ? "#8b949e" : "#0a0e17", border: "none", borderRadius: 10, padding: "12px 32px", fontSize: 14, fontWeight: 600, fontFamily: "inherit", cursor: loading ? "not-allowed" : "pointer" }}>
               {loading ? <span style={{ display: "flex", alignItems: "center", gap: 8 }}><span style={{ width: 14, height: 14, border: "2px solid #8b949e", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin .8s linear infinite" }} />Analizando...</span> : "💎 Buscar oportunidades ocultas"}
             </button>
-            {!loading && !data && !error && <p style={{ fontSize: 10, color: "#6e7681", marginTop: 6 }}>~40s · Análisis del mercado global a fondo</p>}
+            {!loading && !data && !error && <p style={{ fontSize: 13, color: "#6e7681", marginTop: 6 }}>~40s · Análisis del mercado global a fondo</p>}
             {loading && (
               <div style={{ marginTop: 14, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 6, maxWidth: 280, margin: "14px auto 0" }}>
                 {[
-                  { emoji: "🌍", text: "Analizando mercado global",   fs: 11 },
-                  { emoji: "🔍", text: "Identificando oportunidades", fs: 14 },
-                  { emoji: "📊", text: "Preparando tu informe",       fs: 18 },
+                  { emoji: "🌍", text: "Analizando mercado global",   fs: 14 },
+                  { emoji: "🔍", text: "Identificando oportunidades", fs: 17 },
+                  { emoji: "📊", text: "Preparando tu informe",       fs: 21 },
                 ].slice(0, loadPhase + 1).map((s, i) => (
                   <span key={i} style={{ fontSize: s.fs, fontWeight: 700, fontFamily: "'JetBrains Mono',monospace", color: "#00ff87", opacity: i === loadPhase ? 1 : 0.3, transition: "opacity .3s" }}>
                     {s.emoji} {s.text}
@@ -839,16 +839,16 @@ export default function StockAnalyzer() {
             <div style={{ backgroundColor: "rgba(255,71,87,.06)", border: "1px solid rgba(255,71,87,.2)", borderRadius: 10, padding: 16, textAlign: "center", marginBottom: 16 }}>
               {error === "FREEMIUM_LIMIT_MONTHLY" ? (
                 <>
-                  <div style={{ fontSize: 14, color: "#ff4757", marginBottom: 6 }}>⚠️ Has alcanzado el límite de 4 análisis/mes</div>
-                  <div style={{ fontSize: 11, color: "#8b949e", marginBottom: 14 }}>Mejora a Premium para 2 análisis al día</div>
+                  <div style={{ fontSize: 16, color: "#ff4757", marginBottom: 6 }}>⚠️ Has alcanzado el límite de 4 análisis/mes</div>
+                  <div style={{ fontSize: 13, color: "#8b949e", marginBottom: 14 }}>Mejora a Premium para análisis ilimitados</div>
                   <button onClick={() => setShowPaywall(true)} style={{ padding: "10px 24px", fontSize: 13, fontWeight: 700, fontFamily: "inherit", backgroundColor: "#ffb800", color: "#0a0e17", border: "none", borderRadius: 8, cursor: "pointer" }}>
                     💎 Ver planes Premium
                   </button>
                 </>
               ) : (
                 <>
-                  <div style={{ fontSize: 14, color: "#ff4757", marginBottom: 4 }}>⚠️ Error</div>
-                  <div style={{ fontSize: 11, color: "#8b949e" }}>{error}</div>
+                  <div style={{ fontSize: 16, color: "#ff4757", marginBottom: 4 }}>⚠️ Error</div>
+                  <div style={{ fontSize: 13, color: "#8b949e" }}>{error}</div>
                 </>
               )}
             </div>
@@ -856,8 +856,8 @@ export default function StockAnalyzer() {
 
           {data && <>
             <div style={{ background: "linear-gradient(135deg,rgba(0,255,135,.03),rgba(0,204,106,.01))", border: "1px solid rgba(0,255,135,.1)", borderRadius: 10, padding: 14, marginBottom: 12, animation: "glow 3s infinite" }}>
-              <div style={{ fontSize: 9, fontFamily: "'JetBrains Mono',monospace", color: "#00ff87", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 5 }}>🌍 Panorama macro</div>
-              <p style={{ margin: 0, fontSize: 13, lineHeight: 1.7, color: "#c9d1d9" }}>{data.macro}</p>
+              <div style={{ fontSize: 12, fontFamily: "'JetBrains Mono',monospace", color: "#00ff87", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 5 }}>🌍 Panorama macro</div>
+              <p style={{ margin: 0, fontSize: 15, lineHeight: 1.7, color: "#c9d1d9" }}>{data.macro}</p>
             </div>
 
             {data.trends?.map((t, i) => {
@@ -865,16 +865,16 @@ export default function StockAnalyzer() {
               return (
                 <div key={i} style={{ backgroundColor: "#0d1117", border: "1px solid #1e2433", borderRadius: 8, padding: 12, marginBottom: 6, animation: `slideUp .3s ease-out ${i * .08}s both` }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
-                    <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 3, backgroundColor: `${cc}10`, color: cc, border: `1px solid ${cc}20` }}>{t.cat}</span>
+                    <span style={{ fontSize: 12, padding: "2px 8px", borderRadius: 3, backgroundColor: `${cc}10`, color: cc, border: `1px solid ${cc}20` }}>{t.cat}</span>
                   </div>
                   <p style={{ ...pS, fontSize: 12, fontWeight: 500, color: "#e6edf3" }}>{t.t}</p>
-                  {t.skip?.length > 0 && <div style={{ fontSize: 10, color: "#6e7681", marginTop: 2 }}><span style={{ color: "#ff4757" }}>❌ Skip:</span> {t.skip.join(", ")} <span style={{ fontSize: 9 }}>— {t.skip_why}</span></div>}
+                  {t.skip?.length > 0 && <div style={{ fontSize: 12, color: "#6e7681", marginTop: 2 }}><span style={{ color: "#ff4757" }}>❌ Skip:</span> {t.skip.join(", ")} <span style={{ fontSize: 11 }}>— {t.skip_why}</span></div>}
                 </div>
               );
             })}
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", margin: "14px 0 10px" }}>
-              <span style={{ fontSize: 10, color: "#6e7681", fontFamily: "'JetBrains Mono',monospace" }}>── 💎 HIDDEN GEMS ──</span>
+              <span style={{ fontSize: 13, color: "#6e7681", fontFamily: "'JetBrains Mono',monospace" }}>── 💎 HIDDEN GEMS ──</span>
             </div>
 
             {data.picks?.map((p, idx) => {
@@ -888,35 +888,35 @@ export default function StockAnalyzer() {
                       <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 2 }}>
                         <span style={{ fontSize: 18 }}>{idx === 0 ? "💎" : "🔹"}</span>
                         <span style={mn(20)}>{p.tk}</span>
-                        <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 3, backgroundColor: "rgba(136,198,255,.05)", color: "#88c6ff", border: "1px solid rgba(136,198,255,.1)" }}>{p.cap}</span>
-                        {p.radar && <span style={{ fontSize: 9, padding: "1px 6px", borderRadius: 3, backgroundColor: "rgba(0,255,135,.05)", color: "#00ff87", border: "1px solid rgba(0,255,135,.1)" }}>🔇 Bajo radar</span>}
+                        <span style={{ fontSize: 12, padding: "2px 7px", borderRadius: 3, backgroundColor: "rgba(136,198,255,.05)", color: "#88c6ff", border: "1px solid rgba(136,198,255,.1)" }}>{p.cap}</span>
+                        {p.radar && <span style={{ fontSize: 12, padding: "2px 7px", borderRadius: 3, backgroundColor: "rgba(0,255,135,.05)", color: "#00ff87", border: "1px solid rgba(0,255,135,.1)" }}>🔇 Bajo radar</span>}
                       </div>
-                      <div style={{ fontSize: 12, color: "#8b949e" }}>{p.co}</div>
-                      <div style={{ fontSize: 10, color: "#6e7681", marginTop: 1 }}>Precio: {currency === "USD" ? `$${p.px}` : `${toEur(p.px, fx)}€`} · {p.src}</div>
+                      <div style={{ fontSize: 14, color: "#8b949e" }}>{p.co}</div>
+                      <div style={{ fontSize: 12, color: "#6e7681", marginTop: 1 }}>Precio: {currency === "USD" ? `$${p.px}` : `${toEur(p.px, fx)}€`} · {p.src}</div>
                     </div>
                     <div style={{ display: "flex", gap: 8 }}>
                       <button onClick={() => setLevelModal("potential")} style={{ textAlign: "center", backgroundColor: `${pc}08`, border: `1px solid ${pc}25`, borderRadius: 8, padding: "8px 14px", cursor: "pointer", fontFamily: "inherit" }}>
                         <div style={lbl}>🚀 Potencial</div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: pc }}>{potentialEmoji(p.potential)} {p.potential ?? "—"}</div>
-                        <div style={{ fontSize: 9, color: "#6e7681" }}>{p.time}</div>
-                        <div style={{ fontSize: 8, color: "#6e7681", marginTop: 2 }}>toca para saber más</div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: pc }}>{potentialEmoji(p.potential)} {p.potential ?? "—"}</div>
+                        <div style={{ fontSize: 12, color: "#6e7681" }}>{p.time}</div>
+                        <div style={{ fontSize: 11, color: "#6e7681", marginTop: 2 }}>toca para saber más</div>
                       </button>
                       <button onClick={() => setLevelModal("conviction")} style={{ textAlign: "center", backgroundColor: `${cc}08`, border: `1px solid ${cc}25`, borderRadius: 8, padding: "8px 14px", cursor: "pointer", fontFamily: "inherit" }}>
                         <div style={lbl}>🎯 Convicción</div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: cc }}>{convictionEmoji(p.conviction)} {p.conviction ?? "—"}</div>
-                        <div style={{ fontSize: 8, color: "#6e7681", marginTop: 2 }}>toca para saber más</div>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: cc }}>{convictionEmoji(p.conviction)} {p.conviction ?? "—"}</div>
+                        <div style={{ fontSize: 11, color: "#6e7681", marginTop: 2 }}>toca para saber más</div>
                       </button>
                     </div>
                   </div>
                   <div style={{ padding: "7px 10px", backgroundColor: "rgba(136,198,255,.02)", border: "1px solid rgba(136,198,255,.06)", borderRadius: 6, marginBottom: 10 }}>
-                    <div style={{ fontSize: 9, color: "#88c6ff", marginBottom: 2 }}>🔗 Conexión indirecta</div>
+                    <div style={{ fontSize: 12, color: "#88c6ff", marginBottom: 2 }}>🔗 Conexión indirecta</div>
                     <p style={{ ...pS, fontSize: 12, margin: 0 }}>{p.link}</p>
                   </div>
                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 10 }}>
                     {[["1M", p.p1m], ["3M", p.p3m], ["6M", p.p6m]].map(([l, v]) => v && (
                       <div key={l} style={{ padding: "4px 10px", backgroundColor: "#0a0e17", border: "1px solid #1e2433", borderRadius: 5, textAlign: "center" }}>
-                        <div style={{ fontSize: 8, color: "#8b949e" }}>{l}</div>
-                        <div style={{ fontSize: 12, fontWeight: 700, fontFamily: "'JetBrains Mono',monospace", color: String(v).includes("-") ? "#ff4757" : "#00ff87" }}>{v}</div>
+                        <div style={{ fontSize: 11, color: "#8b949e" }}>{l}</div>
+                        <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "'JetBrains Mono',monospace", color: String(v).includes("-") ? "#ff4757" : "#00ff87" }}>{v}</div>
                       </div>
                     ))}
                   </div>
@@ -926,20 +926,20 @@ export default function StockAnalyzer() {
                     <div><div style={lbl}>🛑 Stop</div><div style={mn(14, "#ff4757")}>{currency === "USD" ? `$${p.stop}` : `${toEur(p.stop, fx)}€`}</div></div>
                     <div><div style={lbl}>⚖️ R/R</div><div style={mn(14)}>{p.rr || "—"}</div></div>
                   </div>
-                  {p.cat && <Sec icon="⚡" title="Catalizador"><p style={pS}>{p.cat}</p>{p.cat_date && <p style={{ ...pS, fontSize: 11, color: "#6e7681" }}>📅 {p.cat_date}</p>}{p.notPI && <p style={{ ...pS, fontSize: 11, color: "#00ff87" }}>💡 No priced-in: {p.notPI}</p>}</Sec>}
-                  {p.next?.length > 0 && <Sec icon="📅" title="Próximos catalizadores">{p.next.map((c, j) => (<div key={j} style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 2 }}><span style={{ fontSize: 8, padding: "1px 4px", borderRadius: 2, backgroundColor: c.i === "Alto" ? "rgba(0,255,135,.06)" : "rgba(136,198,255,.05)", color: c.i === "Alto" ? "#00ff87" : "#88c6ff" }}>{c.i}</span><span style={{ fontSize: 11, color: "#c9d1d9" }}>{c.e}</span><span style={{ fontSize: 9, color: "#6e7681", marginLeft: "auto" }}>{c.d}</span></div>))}</Sec>}
-                  {p.exp?.length > 0 && <Sec icon="🗣️" title="Expertos">{p.exp.map((e, j) => (<div key={j} style={{ marginBottom: 5, padding: "5px 8px", backgroundColor: "rgba(136,198,255,.02)", border: "1px solid rgba(136,198,255,.06)", borderRadius: 5 }}><span style={{ fontSize: 10, fontWeight: 600, color: "#88c6ff" }}>{e.s}</span><span style={{ fontSize: 9, color: "#6e7681", marginLeft: 6 }}>{e.d}</span><p style={{ ...pS, margin: "2px 0 0", fontSize: 11 }}>{e.o}</p></div>))}</Sec>}
-                  {p.radarNote && <Sec icon="📡" title="Radar"><p style={{ ...pS, fontSize: 11 }}>{p.radarNote}</p></Sec>}
+                  {p.cat && <Sec icon="⚡" title="Catalizador"><p style={pS}>{p.cat}</p>{p.cat_date && <p style={{ ...pS, fontSize: 13, color: "#6e7681" }}>📅 {p.cat_date}</p>}{p.notPI && <p style={{ ...pS, fontSize: 13, color: "#00ff87" }}>💡 No priced-in: {p.notPI}</p>}</Sec>}
+                  {p.next?.length > 0 && <Sec icon="📅" title="Próximos catalizadores">{p.next.map((c, j) => (<div key={j} style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 2 }}><span style={{ fontSize: 11, padding: "1px 4px", borderRadius: 2, backgroundColor: c.i === "Alto" ? "rgba(0,255,135,.06)" : "rgba(136,198,255,.05)", color: c.i === "Alto" ? "#00ff87" : "#88c6ff" }}>{c.i}</span><span style={{ fontSize: 13, color: "#c9d1d9" }}>{c.e}</span><span style={{ fontSize: 12, color: "#6e7681", marginLeft: "auto" }}>{c.d}</span></div>))}</Sec>}
+                  {p.exp?.length > 0 && <Sec icon="🗣️" title="Expertos">{p.exp.map((e, j) => (<div key={j} style={{ marginBottom: 5, padding: "5px 8px", backgroundColor: "rgba(136,198,255,.02)", border: "1px solid rgba(136,198,255,.06)", borderRadius: 5 }}><span style={{ fontSize: 13, fontWeight: 600, color: "#88c6ff" }}>{e.s}</span><span style={{ fontSize: 12, color: "#6e7681", marginLeft: 6 }}>{e.d}</span><p style={{ ...pS, margin: "2px 0 0", fontSize: 13 }}>{e.o}</p></div>))}</Sec>}
+                  {p.radarNote && <Sec icon="📡" title="Radar"><p style={{ ...pS, fontSize: 13 }}>{p.radarNote}</p></Sec>}
                   {p.why && <Sec icon="🧠" title="Síntesis"><p style={{ ...pS, lineHeight: 1.8 }}>{p.why}</p></Sec>}
                   {p.verdict && <div style={{ padding: 8, backgroundColor: "rgba(0,255,135,.02)", border: "1px solid rgba(0,255,135,.08)", borderRadius: 5, marginBottom: 8 }}><p style={{ ...pS, margin: 0, fontWeight: 500, fontSize: 12 }}>💡 {p.verdict}</p></div>}
-                  {p.risks?.length > 0 && <div style={{ padding: 8, backgroundColor: "rgba(255,71,87,.02)", border: "1px solid rgba(255,71,87,.08)", borderRadius: 5, marginBottom: p.scenarios ? 10 : 0 }}><div style={{ fontSize: 9, fontWeight: 600, color: "#ff4757", marginBottom: 4, textTransform: "uppercase", letterSpacing: 1 }}>⚠️ Riesgos</div>{p.risks.map((r, j) => <div key={j} style={{ fontSize: 11, color: "#c9d1d9", marginBottom: 2, paddingLeft: 8, borderLeft: "2px solid rgba(255,71,87,.2)" }}>{r}</div>)}</div>}
+                  {p.risks?.length > 0 && <div style={{ padding: 8, backgroundColor: "rgba(255,71,87,.02)", border: "1px solid rgba(255,71,87,.08)", borderRadius: 5, marginBottom: p.scenarios ? 10 : 0 }}><div style={{ fontSize: 12, fontWeight: 600, color: "#ff4757", marginBottom: 4, textTransform: "uppercase", letterSpacing: 1 }}>⚠️ Riesgos</div>{p.risks.map((r, j) => <div key={j} style={{ fontSize: 13, color: "#c9d1d9", marginBottom: 2, paddingLeft: 8, borderLeft: "2px solid rgba(255,71,87,.2)" }}>{r}</div>)}</div>}
                   {p.scenarios && (
                     <div style={{ padding: 10, backgroundColor: "rgba(136,198,255,.02)", border: "1px solid rgba(136,198,255,.08)", borderRadius: 8 }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, color: "#88c6ff", marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>📊 Escenarios</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#88c6ff", marginBottom: 8, textTransform: "uppercase", letterSpacing: 1 }}>📊 Escenarios</div>
                       {[["🟢 OPTIMISTA", p.scenarios.optimistic, "#00ff87"], ["🔵 BASE", p.scenarios.base, "#88c6ff"], ["🔴 ADVERSO", p.scenarios.adverse, "#ff4757"]].map(([label, text, color]) => (
                         <div key={label} style={{ marginBottom: 7 }}>
-                          <div style={{ fontSize: 9, fontWeight: 700, color, marginBottom: 2, letterSpacing: 0.8 }}>{label}</div>
-                          <div style={{ fontSize: 11, color: "#c9d1d9", lineHeight: 1.6, paddingLeft: 6, borderLeft: `2px solid ${color}30` }}>{text}</div>
+                          <div style={{ fontSize: 12, fontWeight: 700, color, marginBottom: 2, letterSpacing: 0.8 }}>{label}</div>
+                          <div style={{ fontSize: 13, color: "#c9d1d9", lineHeight: 1.6, paddingLeft: 6, borderLeft: `2px solid ${color}30` }}>{text}</div>
                         </div>
                       ))}
                     </div>
@@ -948,15 +948,15 @@ export default function StockAnalyzer() {
               );
             })}
 
-            <div style={{ textAlign: "center", padding: "10px 12px", fontSize: 10, color: "#8b949e", backgroundColor: "rgba(255,183,0,.03)", border: "1px solid rgba(255,183,0,.1)", borderRadius: 8 }}>⚠️ No es asesoría financiera. Los precios pueden diferir de tu broker — SIEMPRE verifica antes de operar. 1 USD ≈ {fx} EUR.</div>
+            <div style={{ textAlign: "center", padding: "10px 12px", fontSize: 13, color: "#8b949e", backgroundColor: "rgba(255,183,0,.03)", border: "1px solid rgba(255,183,0,.1)", borderRadius: 8 }}>⚠️ No es asesoría financiera. Los precios pueden diferir de tu broker — SIEMPRE verifica antes de operar. 1 USD ≈ {fx} EUR.</div>
           </>}
           {levelModal && <LevelModal type={levelModal} onClose={() => setLevelModal(null)} />}
 
           {!loading && !data && !error && (
             <div style={{ textAlign: "center", padding: "30px 16px", color: "#6e7681" }}>
               <div style={{ fontSize: 40, marginBottom: 10 }}>💎</div>
-              <div style={{ fontSize: 13, color: "#8b949e", marginBottom: 8 }}>Oportunidades ocultas para swing trading</div>
-              <div style={{ fontSize: 11, lineHeight: 1.6, maxWidth: 400, margin: "0 auto" }}>
+              <div style={{ fontSize: 15, color: "#8b949e", marginBottom: 8 }}>Oportunidades ocultas para swing trading</div>
+              <div style={{ fontSize: 13, lineHeight: 1.6, maxWidth: 400, margin: "0 auto" }}>
                 1 sola llamada a la IA que internamente:<br />
                 <span style={{ color: "#00ff87" }}>→</span> Escanea macro (aranceles, tech, regulaciones)<br />
                 <span style={{ color: "#00ff87" }}>→</span> Descarta mega-caps obvias<br />
@@ -974,7 +974,7 @@ export default function StockAnalyzer() {
             <div style={{ textAlign: "center", padding: "30px 16px", color: "#6e7681" }}>
               <div style={{ fontSize: 32, marginBottom: 8 }}>📡</div>
               <div style={{ fontSize: 13, color: "#8b949e" }}>Sin stocks pendientes</div>
-              <div style={{ fontSize: 11, marginTop: 4 }}>Lanza un análisis para empezar a monitorear</div>
+              <div style={{ fontSize: 13, marginTop: 4 }}>Lanza un análisis para empezar a monitorear</div>
             </div>
           );
           return <>
