@@ -530,10 +530,6 @@ export default function StockAnalyzer() {
           <p style={{ color: "#6e7681", fontSize: 10, margin: 0 }}>Análisis en profundidad · Mercado global · No es consejo de inversión</p>
         </div>
 
-        {/* Sign out */}
-        <div style={{ marginBottom: 6, textAlign: "right" }}>
-          <button onClick={() => { localStorage.removeItem("sp-auth-token"); setAuthed(false); setRuns([]); setData(null); }} style={{ fontSize: 9, color: "#6e7681", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit" }}>🚪 Cerrar sesión</button>
-        </div>
 
         {/* MARKET BAR */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 14, flexWrap: "wrap", marginBottom: 14, padding: "5px 12px", backgroundColor: clock.o ? "rgba(0,255,135,.04)" : "rgba(136,198,255,.04)", border: `1px solid ${clock.o ? "rgba(0,255,135,.1)" : "rgba(136,198,255,.1)"}`, borderRadius: 8 }}>
@@ -547,8 +543,8 @@ export default function StockAnalyzer() {
 
         {/* TABS */}
         <div style={{ display: "flex", marginBottom: 18, borderBottom: "1px solid #1e2433" }}>
-          {[["analyze", "🌍 Analizar"], ["monitor", `📡 Monitor${stats.pend ? ` (${stats.pend})` : ""}`], ["history", `📊 Historial`]].map(([k, l]) => (
-            <button key={k} onClick={() => setTab(k)} style={{ flex: 1, padding: "8px 0", fontSize: 13, fontWeight: 600, fontFamily: "inherit", backgroundColor: "transparent", color: tab === k ? "#00ff87" : "#6e7681", border: "none", borderBottom: tab === k ? "2px solid #00ff87" : "2px solid transparent", cursor: "pointer" }}>{l}</button>
+          {[["analyze", "🌍 Analizar"], ["monitor", `📡 Monitor${stats.pend ? ` (${stats.pend})` : ""}`], ["history", "📊 Historial"], ["profile", "👤 Perfil"]].map(([k, l]) => (
+            <button key={k} onClick={() => setTab(k)} style={{ flex: 1, padding: "8px 0", fontSize: 12, fontWeight: 600, fontFamily: "inherit", backgroundColor: "transparent", color: tab === k ? "#00ff87" : "#6e7681", border: "none", borderBottom: tab === k ? "2px solid #00ff87" : "2px solid transparent", cursor: "pointer" }}>{l}</button>
           ))}
         </div>
 
@@ -908,6 +904,37 @@ export default function StockAnalyzer() {
             </div>
           ))}
         </>}
+
+        {/* ═══ PERFIL ═══ */}
+        {tab === "profile" && (
+          <div style={{ maxWidth: 440, margin: "0 auto" }}>
+            {/* Premium */}
+            <div style={{ backgroundColor: "#0d1117", border: "1px solid rgba(255,184,0,.2)", borderRadius: 12, padding: 16, marginBottom: 12 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, color: "#ffb800", marginBottom: 4 }}>⭐ Plan Premium</div>
+              <div style={{ fontSize: 11, color: "#8b949e", marginBottom: 14 }}>2 análisis al día · Picks personalizados · Soporte prioritario</div>
+              <button onClick={() => setShowPaywall(true)} style={{ width: "100%", padding: "11px", fontSize: 14, fontWeight: 700, fontFamily: "inherit", backgroundColor: "#ffb800", color: "#0a0e17", border: "none", borderRadius: 8, cursor: "pointer" }}>
+                💎 Ver planes y activar Premium
+              </button>
+            </div>
+
+            {/* Stats rápidas */}
+            {stats.tot > 0 && (
+              <div style={{ backgroundColor: "#0d1117", border: "1px solid #1e2433", borderRadius: 12, padding: 16, marginBottom: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "#8b949e", marginBottom: 10, textTransform: "uppercase", letterSpacing: 1 }}>Tus estadísticas</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                  <div style={{ textAlign: "center" }}><div style={lbl}>Análisis</div><div style={mn(18)}>{stats.tot}</div></div>
+                  <div style={{ textAlign: "center" }}><div style={lbl}>Win rate</div><div style={mn(18, +stats.wr >= 50 ? "#00ff87" : "#ff4757")}>{stats.wr}%</div></div>
+                  <div style={{ textAlign: "center" }}><div style={lbl}>Pendientes</div><div style={mn(18, "#ffb800")}>{stats.pend}</div></div>
+                </div>
+              </div>
+            )}
+
+            {/* Cerrar sesión */}
+            <button onClick={() => { localStorage.removeItem("sp-auth-token"); setAuthed(false); setRuns([]); setData(null); }} style={{ width: "100%", padding: "11px", fontSize: 13, fontFamily: "inherit", backgroundColor: "transparent", color: "#ff4757", border: "1px solid rgba(255,71,87,.2)", borderRadius: 8, cursor: "pointer" }}>
+              🚪 Cerrar sesión
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
