@@ -267,7 +267,7 @@ function AuthGate({ onAuth }) {
           body: JSON.stringify({ password }),
         });
         const updateData = await updateRes.json();
-        if (!updateRes.ok) throw new Error(updateData.message || updateData.error_description || "Error al cambiar contraseña");
+        if (!updateRes.ok) throw new Error(JSON.stringify(updateData));
 
         // Log in with the same token
         localStorage.setItem("sp-auth-token", resetTokens.accessToken);
