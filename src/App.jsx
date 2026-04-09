@@ -512,9 +512,10 @@ function Divider() {
   return <div style={{ height: 1, backgroundColor: "#1e2433" }} />;
 }
 
-function ProfileTab({ isPremium, billingStatus, profileData, onShowPaywall, onSignOut }) {
+function ProfileTab({ isPremium, billingStatus, profileData, onShowPaywall, onSignOut, onRefreshBilling }) {
   const [legalDoc, setLegalDoc] = useState(null);
   const [portalLoading, setPortalLoading] = useState(false);
+  const [refreshing, setRefreshingBilling] = useState(false);
 
   const sub = profileData?.subscription;
   const monthlyCount = sub?.monthlyCount ?? 0;
@@ -567,9 +568,12 @@ function ProfileTab({ isPremium, billingStatus, profileData, onShowPaywall, onSi
           <Divider />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 12, paddingBottom: 12 }}>
             <div style={{ fontSize: 10, color: "#6e7681", textTransform: "uppercase", letterSpacing: 0.8 }}>Plan</div>
-            <span style={{ fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 20, border: `1px solid ${isPremium ? (billingStatus?.isCanceling ? "rgba(255,71,87,.4)" : "rgba(255,184,0,.4)") : "rgba(110,118,129,.3)"}`, backgroundColor: isPremium ? (billingStatus?.isCanceling ? "rgba(255,71,87,.08)" : "rgba(255,184,0,.1)") : "rgba(110,118,129,.1)", color: isPremium ? (billingStatus?.isCanceling ? "#ff4757" : "#ffb800") : "#8b949e" }}>
-              {isPremium ? (billingStatus?.isCanceling ? "💎 Premium (cancela)" : "💎 Premium") : "Gratuito"}
-            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <button onClick={async () => { setRefreshingBilling(true); await onRefreshBilling?.(); setRefreshingBilling(false); }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, opacity: refreshing ? 0.4 : 0.6, padding: 2 }} title="Actualizar estado">🔄</button>
+              <span style={{ fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 20, border: `1px solid ${isPremium ? (billingStatus?.isCanceling ? "rgba(255,71,87,.4)" : "rgba(255,184,0,.4)") : "rgba(110,118,129,.3)"}`, backgroundColor: isPremium ? (billingStatus?.isCanceling ? "rgba(255,71,87,.08)" : "rgba(255,184,0,.1)") : "rgba(110,118,129,.1)", color: isPremium ? (billingStatus?.isCanceling ? "#ff4757" : "#ffb800") : "#8b949e" }}>
+                {isPremium ? (billingStatus?.isCanceling ? "💎 Premium (cancela)" : "💎 Premium") : "Gratuito"}
+              </span>
+            </div>
           </div>
           <Divider />
           <div style={{ paddingTop: 12, paddingBottom: 12 }}>
@@ -1181,6 +1185,11 @@ export default function StockAnalyzer() {
           profileData={profileData}
           onShowPaywall={() => setShowPaywall(true)}
           onSignOut={() => { localStorage.removeItem("sp-auth-token"); setAuthed(false); setRuns([]); setData(null); }}
+          onRefreshBilling={async () => {
+            const d = await apiFetch("/api/billing/status");
+            setIsPremium(d.isPremium);
+            setBillingStatus(d);
+          }}
         />}
       </div>
     </div>
