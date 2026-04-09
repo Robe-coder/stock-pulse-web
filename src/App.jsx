@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
 import {
   analyzeStock,
   calcStats,
@@ -219,16 +220,15 @@ function AuthGate({ onAuth }) {
 
   const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "";
   const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-  // Detect password recovery token in URL (hash = implicit flow, search = PKCE flow)
+  // Detect password recovery token in URL (hash = implicit, search = PKCE)
   useEffect(() => {
     const hashParams = new URLSearchParams(window.location.hash.slice(1));
-    const searchParams = new URLSearchParams(window.location.search.slice(1));
-
     const accessToken = hashParams.get("access_token");
     const refreshToken = hashParams.get("refresh_token");
     const type = hashParams.get("type");
-    const code = searchParams.get("code");
+    const code = new URLSearchParams(window.location.search).get("code");
 
     if (accessToken && type === "recovery") {
       // Implicit flow
@@ -236,22 +236,16 @@ function AuthGate({ onAuth }) {
       setMode("reset");
       window.history.replaceState(null, "", window.location.pathname);
     } else if (code) {
-      // PKCE flow — intercambiar code por sesión
+      // PKCE flow — el cliente de Supabase maneja el code_verifier automáticamente
       setLoading(true);
-      fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=pkce`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "apikey": SUPABASE_ANON },
-        body: JSON.stringify({ auth_code: code }),
-      })
-        .then(r => r.json())
-        .then(data => {
-          if (data.access_token) {
-            setResetTokens({ accessToken: data.access_token, refreshToken: data.refresh_token });
+      supabase.auth.exchangeCodeForSession(code)
+        .then(({ data, error }) => {
+          if (!error && data.session) {
+            setResetTokens({ accessToken: data.session.access_token, refreshToken: data.session.refresh_token });
             setMode("reset");
           }
           window.history.replaceState(null, "", window.location.pathname);
         })
-        .catch(() => {})
         .finally(() => setLoading(false));
     }
   }, []);
