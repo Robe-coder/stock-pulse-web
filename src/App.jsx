@@ -512,7 +512,7 @@ function Divider() {
   return <div style={{ height: 1, backgroundColor: "#1e2433" }} />;
 }
 
-function ProfileTab({ isPremium, profileData, onShowPaywall, onSignOut }) {
+function ProfileTab({ isPremium, billingStatus, profileData, onShowPaywall, onSignOut }) {
   const [legalDoc, setLegalDoc] = useState(null);
   const [portalLoading, setPortalLoading] = useState(false);
 
@@ -567,8 +567,8 @@ function ProfileTab({ isPremium, profileData, onShowPaywall, onSignOut }) {
           <Divider />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 12, paddingBottom: 12 }}>
             <div style={{ fontSize: 10, color: "#6e7681", textTransform: "uppercase", letterSpacing: 0.8 }}>Plan</div>
-            <span style={{ fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 20, border: `1px solid ${isPremium ? "rgba(255,184,0,.4)" : "rgba(110,118,129,.3)"}`, backgroundColor: isPremium ? "rgba(255,184,0,.1)" : "rgba(110,118,129,.1)", color: isPremium ? "#ffb800" : "#8b949e" }}>
-              {isPremium ? "💎 Premium" : "Gratuito"}
+            <span style={{ fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 20, border: `1px solid ${isPremium ? (billingStatus?.isCanceling ? "rgba(255,71,87,.4)" : "rgba(255,184,0,.4)") : "rgba(110,118,129,.3)"}`, backgroundColor: isPremium ? (billingStatus?.isCanceling ? "rgba(255,71,87,.08)" : "rgba(255,184,0,.1)") : "rgba(110,118,129,.1)", color: isPremium ? (billingStatus?.isCanceling ? "#ff4757" : "#ffb800") : "#8b949e" }}>
+              {isPremium ? (billingStatus?.isCanceling ? "💎 Premium (cancela)" : "💎 Premium") : "Gratuito"}
             </span>
           </div>
           <Divider />
@@ -590,10 +590,24 @@ function ProfileTab({ isPremium, profileData, onShowPaywall, onSignOut }) {
 
       {/* SUSCRIPCIÓN */}
       <SectionLabel label="SUSCRIPCIÓN" />
+      {billingStatus?.isCanceling && billingStatus?.currentPeriodEnd && (
+        <div style={{ backgroundColor: "rgba(255,183,0,.06)", border: "1px solid rgba(255,183,0,.25)", borderRadius: 10, padding: "10px 14px", marginBottom: 10, display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ fontSize: 18 }}>⚠️</span>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: "#ffb800" }}>Suscripción cancelada</div>
+            <div style={{ fontSize: 12, color: "#8b949e", marginTop: 2 }}>
+              Mantienes el acceso Premium hasta el{" "}
+              <span style={{ color: "#e6edf3" }}>
+                {new Date(billingStatus.currentPeriodEnd).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" })}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
       <SettingsCard>
         <SettingsRow
           icon="💎"
-          label={isPremium ? "Plan Premium activo" : "Ver planes Premium"}
+          label={isPremium ? (billingStatus?.isCanceling ? "Premium (cancelando)" : "Plan Premium activo") : "Ver planes Premium"}
           onClick={isPremium ? null : onShowPaywall}
         />
         <Divider />
@@ -668,6 +682,7 @@ export default function StockAnalyzer() {
   const [levelModal, setLevelModal] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [billingStatus, setBillingStatus] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [currency, setCurrency] = useState(() => localStorage.getItem("sp-currency") || "USD");
   const loadStart = useRef(0);
@@ -682,7 +697,7 @@ export default function StockAnalyzer() {
   useEffect(() => {
     if (!authed) return;
     fetchRuns().then(setRuns).catch(() => {});
-    apiFetch("/api/billing/status").then(d => setIsPremium(d.isPremium)).catch(() => {});
+    apiFetch("/api/billing/status").then(d => { setIsPremium(d.isPremium); setBillingStatus(d); }).catch(() => {});
     apiFetch("/api/profile/stats").then(d => setProfileData(d)).catch(() => {});
   }, [authed]);
 
@@ -1162,6 +1177,7 @@ export default function StockAnalyzer() {
         {/* ═══ PERFIL ═══ */}
         {tab === "profile" && <ProfileTab
           isPremium={isPremium}
+          billingStatus={billingStatus}
           profileData={profileData}
           onShowPaywall={() => setShowPaywall(true)}
           onSignOut={() => { localStorage.removeItem("sp-auth-token"); setAuthed(false); setRuns([]); setData(null); }}
